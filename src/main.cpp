@@ -115,7 +115,7 @@ int main() {
           state << 0, 0, 0, v, cte, epsi;
           auto solution = mpc.Solve(state, coeffs);
 
-          double steer_value = solution.[6];
+          double steer_value = solution[6];
           double throttle_value= solution[7];
           mpc.steer_prev_ = steer_value;
           mpc.throttle_prev_ = throttle_value;
@@ -127,7 +127,7 @@ int main() {
           msgJson["throttle"] = throttle_value;
 
           //Display the MPC predicted trajectory 
-          vector<double> mpc_x_vals mpc.X_;
+          vector<double> mpc_x_vals = mpc.X_;
           vector<double> mpc_y_vals = mpc.Y_;
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
