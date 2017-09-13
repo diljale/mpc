@@ -92,16 +92,14 @@ int main() {
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
 
-          Eigen::MatrixXd local_pts = Eigen::MatrixXd(2,ptsx.size());
+          Eigen::VectorXd ptsx_local = Eigen::VectorXd(ptsx.size());
+          Eigen::VectorXd ptsy_local = Eigen::VectorXd(ptsy.size());
 
           for (size_t i=0; i<ptsx.size() ; ++i){
-            local_pts(0,i) =   cos(psi) * (ptsx[i] - px) + sin(psi) * (ptsy[i] - py);
-            local_pts(1,i) =  -sin(psi) * (ptsx[i] - px) + cos(psi) * (ptsy[i] - py);  
+            ptsx_local(i) =   cos(psi) * (ptsx[i] - px) + sin(psi) * (ptsy[i] - py);
+            ptsy_local(i) =  -sin(psi) * (ptsx[i] - px) + cos(psi) * (ptsy[i] - py);  
           } 
-          
-          Eigen::VectorXd ptsx_local = local_pts.row(0);
-          Eigen::VectorXd ptsy_local = local_pts.row(1);
-          
+      
           // fit a 3rd order polynomial to the waypoints
           auto coeffs = polyfit(ptsx_local, ptsy_local, 3);
 
