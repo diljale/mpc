@@ -1,0 +1,21 @@
+
+1] Vehicle model
+Vehicle model is bicycle model with update equations being
+      // x_[t+1] = x[t] + v[t] * cos(psi[t]) * dt
+      // y_[t+1] = y[t] + v[t] * sin(psi[t]) * dt
+      // psi_[t+1] = psi[t] + v[t] / Lf * delta[t] * dt
+      // v_[t+1] = v[t] + a[t] * dt
+      // cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt
+      // epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt
+
+2] Choosing N and dt.
+I played with different values of N and dt. N ranging from 10 to 25, while dt ranging from 0.01 to 0.05. I saw that for low values car oscillates a lot and hence i chose value which makes car stable while driving
+
+3] Polynomial fitting
+I initially implemented 2nd degree polynomial to fit waypoints, but that was not enough for sharp curves and car would go off-track. I had to then implement a 3rd degre polynomial to account for sharp curves
+
+AD<double> f0 = coeffs[0] + coeffs[1] * x0 + coeffs[2]*x0*x0 + coeffs[3]*x0*x0*x0;
+AD<double> psides0 = CppAD::atan(coeffs[1]+2*coeffs[2]*x0 + 3 * coeffs[3]*x0*x0)
+      
+4] Model Predictive Control with Latency
+In order to account for latency, my appraoch was to use previous optimal vales to constrain the solver by only solving for optimal values from current time + latency.
