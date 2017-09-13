@@ -262,9 +262,9 @@ vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs) {
   std::cout << "Cost " << cost << std::endl;
   X_.clear();
   Y_.clear();
-  for (size_t t = 0; t < N-1 ; t++){
-  	X_.push_back(solution.x[x_start+i]);
-  	Y_.push_back(solution.x[y_start+i]);
+  for (size_t t = 0; t < N-1 ; ++t){
+  	X_.push_back(solution.x[x_start+t]);
+  	Y_.push_back(solution.x[y_start+t]);
   }
  
   return {solution.x[x_start + latency_step],   solution.x[y_start + latency_step],
