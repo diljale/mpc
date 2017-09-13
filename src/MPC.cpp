@@ -240,7 +240,10 @@ vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs) {
 
   // options
   std::string options;
-
+  options += "Integer print_level  0\n";
+  options += "Sparse  true        forward\n";
+  options += "Sparse  true        reverse\n";
+ 
   // place to return solution
   CppAD::ipopt::solve_result<Dvector> solution;
 
