@@ -92,24 +92,43 @@ int main() {
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
 
-          /*
-          * TODO: Calculate steering angle and throttle using MPC.
-          *
-          * Both are in between [-1, 1].
-          *
-          */
-          double steer_value;
-          double throttle_value;
+          Eigen::MatrixXd local_pts = Eigen::MatrixXd(2,ptsx.size());
 
+          for (size_t i=0; i<ptsx.size() ; ++i){
+            local_pts(0,i) =   cos(psi) * (ptsx[i] - px) + sin(psi) * (ptsy[i] - py);
+            local_pts(1,i) =  -sin(psi) * (ptsx[i] - px) + cos(psi) * (ptsy[i] - py);  
+          } 
+          
+          Eigen::VectorXd ptsx_local = local_pts.row(0);
+          Eigen::VectorXd ptsy_local = local_pts.row(1);
+          
+          // fit a 3rd order polynomial to the waypoints
+          auto coeffs = polyfit(ptsx_local, ptsy_local, 3);
+
+          // get cross-track error from fit, assuming car as origin
+          double cte = polyeval(coeffs, 0);
+
+          // get orientation error from fit with car as origin
+          double epsi = -atan(coeffs[1]); 
+          
+          Eigen::VectorXd state(6);
+          state << 0, 0, 0, v, cte, epsi;
+          auto solution = mpc.Solve(state, coeffs);
+
+          double steer_value = solution.[6];
+          double throttle_value= solution[7];
+          mpc.steer_prev_ = steer_value;
+          mpc.throttle_prev_ = throttle_value;
+          
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
-          msgJson["steering_angle"] = steer_value;
+          msgJson["steering_angle"] = -steer_value/0.436332;
           msgJson["throttle"] = throttle_value;
 
           //Display the MPC predicted trajectory 
-          vector<double> mpc_x_vals;
-          vector<double> mpc_y_vals;
+          vector<double> mpc_x_vals mpc.X_;
+          vector<double> mpc_y_vals = mpc.Y_;
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Green line
@@ -124,6 +143,11 @@ int main() {
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
 
+          for (unsigned i=0 ; i < ptsx_local.size(); ++i) {
+            next_x_vals.push_back(ptsx_local(i));
+            next_y_vals.push_back(ptsy_local(i));
+          }
+          
           msgJson["next_x"] = next_x_vals;
           msgJson["next_y"] = next_y_vals;
 
