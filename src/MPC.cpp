@@ -6,7 +6,7 @@
 using CppAD::AD;
 
 // TODO: Set the timestep length and duration
-size_t N = 12;
+size_t N = 10;
 double dt = 0.05;
 double latency = 0.1; // 100 ms latency
 
