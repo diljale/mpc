@@ -18,6 +18,8 @@ class MPC {
  
   double steer_prev_;
   double throttle_prev_;
+  vector<double> X_;
+  vector<double> Y_;
 };
 
 #endif /* MPC_H */
