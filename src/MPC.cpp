@@ -196,8 +196,8 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
 
   auto latency_step = latency / dt;
   for (int i = delta_start; i < delta_start + latency_step; i++) {
-    vars_lowerbound[i] = delta_prev;
-    vars_upperbound[i] = delta_prev;
+    vars_lowerbound[i] = steer_prev_;
+    vars_upperbound[i] = steer_prev_;
   }
  
   // Acceleration/decceleration upper and lower limits.
@@ -208,8 +208,8 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   }
 
  for (int i = a_start; i < a_start+latency_step; i++) {
-    vars_lowerbound[i] = a_prev;
-    vars_upperbound[i] = a_prev;
+    vars_lowerbound[i] = throttle_prev_;
+    vars_upperbound[i] = throttle_prev_;
   }
  
   // Lower and upper limits for constraints
@@ -260,6 +260,13 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
 
   auto cost = solution.obj_value;
   std::cout << "Cost " << cost << std::endl;
+  X_.clear;
+  Y_.clear;
+  for (auto t = 0; t < N-1 ; t++){
+  	X_.push_back(solution.x[x_start+i]);
+  	Y_.push_back(solution.x[y_start+i]);
+  }
+ 
   return {solution.x[x_start + latency_step],   solution.x[y_start + latency_step],
           solution.x[psi_start + latency_step], solution.x[v_start + latency_step],
           solution.x[cte_start + latency_step], solution.x[epsi_start + latency_step],
