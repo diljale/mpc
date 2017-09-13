@@ -260,7 +260,7 @@ vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs) {
   X_.clear();
   Y_.clear();
   for (size_t t = 0; t < N-1 ; ++t){
-   std::cout << solution.x[delta_start+i] << " " << latency_step << std::endl;
+   std::cout << solution.x[delta_start+t] << " " << latency_step << std::endl;
   	X_.push_back(solution.x[x_start+t]);
   	Y_.push_back(solution.x[y_start+t]);
   }
